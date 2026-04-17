@@ -5,8 +5,6 @@ import "fmt"
 // Mappable is the interface a jwx structure must satisfy to be converted
 // to a map[string]any by [AsMap]. jwt.Token, jws.Headers, jwe.Headers, and
 // jwk.Key all satisfy it via their existing Field and Keys methods.
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 type Mappable interface {
 	Field(key string) (any, bool)
 	Keys() []string
@@ -18,8 +16,6 @@ type Mappable interface {
 // storage. AsMap is not a deep-copy or snapshot helper.
 //
 // Returns an error if dst is nil.
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func AsMap(m Mappable, dst map[string]any) error {
 	if dst == nil {
 		return fmt.Errorf("jwxfilter.AsMap: destination map cannot be nil")

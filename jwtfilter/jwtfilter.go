@@ -1,7 +1,4 @@
 // Package jwtfilter provides filters for [jwt.Token] claims.
-//
-// EXPERIMENTAL: Every exported symbol in this package is experimental and
-// may change or be removed in any release.
 package jwtfilter
 
 import (
@@ -25,8 +22,6 @@ var standardClaimNames = []string{
 
 // ByName returns a filter that keeps (via Filter) or drops (via Reject) the
 // named claims from a [jwt.Token].
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func ByName(names ...string) jwxfilter.Filter[jwt.Token] {
 	return filterable.NewNameBased[jwt.Token](names...)
 }
@@ -34,8 +29,6 @@ func ByName(names ...string) jwxfilter.Filter[jwt.Token] {
 // Standard returns a filter targeting the seven RFC 7519 standard claims
 // (aud, exp, iat, iss, jti, nbf, sub). Use Filter to keep only standard
 // claims, or Reject to keep only custom claims.
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func Standard() jwxfilter.Filter[jwt.Token] {
 	return ByName(standardClaimNames...)
 }

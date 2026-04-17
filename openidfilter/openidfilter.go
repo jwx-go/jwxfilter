@@ -5,9 +5,6 @@
 // operate on and return [jwt.Token] because that is what [openid.Token]'s
 // Clone method returns — [openid.Token] embeds [jwt.Token] and can be
 // passed directly.
-//
-// EXPERIMENTAL: Every exported symbol in this package is experimental and
-// may change or be removed in any release.
 package openidfilter
 
 import (
@@ -50,8 +47,6 @@ var standardClaimNames = []string{
 
 // ByName returns a filter that keeps (via Filter) or drops (via Reject) the
 // named claims. The filter accepts any [jwt.Token], including [openid.Token].
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func ByName(names ...string) jwxfilter.Filter[jwt.Token] {
 	return filterable.NewNameBased[jwt.Token](names...)
 }
@@ -62,8 +57,6 @@ func ByName(names ...string) jwxfilter.Filter[jwt.Token] {
 //
 // Pass an [openid.Token] to exercise OpenID-specific claim names; plain
 // [jwt.Token] values work too but will only carry claims already on them.
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func Standard() jwxfilter.Filter[jwt.Token] {
 	return ByName(standardClaimNames...)
 }
