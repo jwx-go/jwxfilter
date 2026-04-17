@@ -1,7 +1,4 @@
 // Package jwefilter provides filters for [jwe.Headers] fields.
-//
-// EXPERIMENTAL: Every exported symbol in this package is experimental and
-// may change or be removed in any release.
 package jwefilter
 
 import (
@@ -36,8 +33,6 @@ var standardHeaderNames = []string{
 
 // ByName returns a filter that keeps (via Filter) or drops (via Reject) the
 // named fields from a [jwe.Headers].
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func ByName(names ...string) jwxfilter.Filter[jwe.Headers] {
 	return filterable.NewNameBased[jwe.Headers](names...)
 }
@@ -45,8 +40,6 @@ func ByName(names ...string) jwxfilter.Filter[jwe.Headers] {
 // Standard returns a filter targeting the eighteen RFC 7516 standard header
 // parameters. Use Filter to keep only standard fields, or Reject to keep only
 // custom fields.
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func Standard() jwxfilter.Filter[jwe.Headers] {
 	return ByName(standardHeaderNames...)
 }

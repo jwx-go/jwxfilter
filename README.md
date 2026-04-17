@@ -17,6 +17,7 @@ go get github.com/jwx-go/jwxfilter/v4
 | `jwxfilter/jwsfilter` | Filters for `jws.Headers` |
 | `jwxfilter/jwefilter` | Filters for `jwe.Headers` |
 | `jwxfilter/jwkfilter` | Filters for `jwk.Key` |
+| `jwxfilter/openidfilter` | Filters for `openid.Token` (OpenID Connect Core 1.0 claims) |
 
 ## Example
 
@@ -29,7 +30,3 @@ import (
 stripped, err := jwtfilter.Standard().Filter(token) // only RFC 7519 claims
 custom,   err := jwtfilter.ByName("app_role").Filter(token)
 ```
-
-## Stability
-
-Every exported symbol in this module carries an EXPERIMENTAL godoc marker. The API may change in any release until explicitly stabilized.

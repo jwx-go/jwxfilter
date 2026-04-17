@@ -5,11 +5,7 @@
 // The public surface is intentionally small: one generic interface Filter[T],
 // one Mappable interface, and the AsMap helper. All framework machinery lives
 // inside an internal package. Users construct filters via the per-JOSE-type
-// subpackages (jwtfilter, jwsfilter, jwefilter, jwkfilter).
-//
-// EVERY exported symbol in this package and its subpackages is EXPERIMENTAL
-// and may change or be removed in any release. The module does not provide
-// semver compatibility guarantees.
+// subpackages (jwtfilter, jwsfilter, jwefilter, jwkfilter, openidfilter).
 package jwxfilter
 
 // Filter is a filter over any JWx object type.
@@ -24,8 +20,6 @@ package jwxfilter
 //   - jwsfilter.ByName / jwsfilter.Standard (for jws.Headers)
 //   - jwefilter.ByName / jwefilter.Standard (for jwe.Headers)
 //   - jwkfilter.ByName / jwkfilter.RSAStandard / etc. (for jwk.Key)
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 type Filter[T any] interface {
 	Filter(obj T) (T, error)
 	Reject(obj T) (T, error)

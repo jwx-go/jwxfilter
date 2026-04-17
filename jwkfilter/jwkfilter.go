@@ -1,7 +1,4 @@
 // Package jwkfilter provides filters for [jwk.Key] fields.
-//
-// EXPERIMENTAL: Every exported symbol in this package is experimental and
-// may change or be removed in any release.
 package jwkfilter
 
 import (
@@ -26,8 +23,6 @@ var commonKeyFields = []string{
 
 // ByName returns a filter that keeps (via Filter) or drops (via Reject) the
 // named fields from a [jwk.Key].
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func ByName(names ...string) jwxfilter.Filter[jwk.Key] {
 	return filterable.NewNameBased[jwk.Key](names...)
 }
@@ -35,8 +30,6 @@ func ByName(names ...string) jwxfilter.Filter[jwk.Key] {
 // RSAStandard returns a filter for RFC 7517 + RFC 7518 RSA key fields
 // (kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256, e, n, d, dp, dq,
 // p, q, qi).
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func RSAStandard() jwxfilter.Filter[jwk.Key] {
 	names := append([]string{}, commonKeyFields...)
 	names = append(names,
@@ -49,8 +42,6 @@ func RSAStandard() jwxfilter.Filter[jwk.Key] {
 
 // ECDSAStandard returns a filter for RFC 7517 + RFC 7518 ECDSA key fields
 // (kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256, crv, x, y, d).
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func ECDSAStandard() jwxfilter.Filter[jwk.Key] {
 	names := append([]string{}, commonKeyFields...)
 	names = append(names,
@@ -61,8 +52,6 @@ func ECDSAStandard() jwxfilter.Filter[jwk.Key] {
 
 // OKPStandard returns a filter for RFC 8037 OKP key fields
 // (kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256, crv, x, d).
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func OKPStandard() jwxfilter.Filter[jwk.Key] {
 	names := append([]string{}, commonKeyFields...)
 	names = append(names, jwk.OKPCrvKey, jwk.OKPXKey, jwk.OKPDKey)
@@ -71,8 +60,6 @@ func OKPStandard() jwxfilter.Filter[jwk.Key] {
 
 // SymmetricStandard returns a filter for RFC 7517 symmetric key fields
 // (kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256, k).
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func SymmetricStandard() jwxfilter.Filter[jwk.Key] {
 	names := append([]string{}, commonKeyFields...)
 	names = append(names, jwk.SymmetricOctetsKey)
@@ -81,8 +68,6 @@ func SymmetricStandard() jwxfilter.Filter[jwk.Key] {
 
 // AKPStandard returns a filter for AKP key fields
 // (kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256, pub, priv).
-//
-// EXPERIMENTAL: This API may change or be removed in any release.
 func AKPStandard() jwxfilter.Filter[jwk.Key] {
 	names := append([]string{}, commonKeyFields...)
 	names = append(names, jwk.AKPPubKey, jwk.AKPPrivKey)
