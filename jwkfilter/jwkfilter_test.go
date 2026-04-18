@@ -27,7 +27,7 @@ func TestFieldNameFilter(t *testing.T) {
 			"e": "value_e"
 		}`
 
-		rawKey, err := jwk.ParseKey[jwk.Key]([]byte(src))
+		rawKey, err := jwk.ParseKeyAs[jwk.Key]([]byte(src))
 		require.NoError(t, err, "jwk.ParseKey should succeed")
 
 		filtered, err := fn.Filter(rawKey)
@@ -67,7 +67,7 @@ func TestFieldNameFilter(t *testing.T) {
 			"e": "value_e"
 		}`
 
-		rawKey, err := jwk.ParseKey[jwk.Key]([]byte(src))
+		rawKey, err := jwk.ParseKeyAs[jwk.Key]([]byte(src))
 		require.NoError(t, err, "jwk.ParseKey should succeed")
 
 		rejected, err := fn.Reject(rawKey)
@@ -92,7 +92,7 @@ func TestFieldNameFilter(t *testing.T) {
 	t.Run("Filter and Reject do not panic on a basic key", func(t *testing.T) {
 		const src = `{ "kty": "oct", "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ" }`
 
-		rawKey, err := jwk.ParseKey[jwk.Key]([]byte(src))
+		rawKey, err := jwk.ParseKeyAs[jwk.Key]([]byte(src))
 		require.NoError(t, err, "jwk.ParseKey should succeed")
 
 		fn := jwkfilter.ByName("a", "b", "c")
@@ -114,7 +114,7 @@ func TestFieldNameFilter(t *testing.T) {
 			"c": "value_c"
 		}`
 
-		rawKey, err := jwk.ParseKey[jwk.Key]([]byte(src))
+		rawKey, err := jwk.ParseKeyAs[jwk.Key]([]byte(src))
 		require.NoError(t, err, "jwk.ParseKey should succeed")
 
 		filtered, err := fn.Filter(rawKey)
@@ -140,7 +140,7 @@ func TestFieldNameFilter(t *testing.T) {
 			"d": "value_d"
 		}`
 
-		rawKey, err := jwk.ParseKey[jwk.Key]([]byte(src))
+		rawKey, err := jwk.ParseKeyAs[jwk.Key]([]byte(src))
 		require.NoError(t, err, "jwk.ParseKey should succeed")
 
 		filtered, err := fn.Filter(rawKey)
@@ -173,7 +173,7 @@ func TestECDSAStandard(t *testing.T) {
 		"custom2": "value2"
 	}`
 
-	rawKey, err := jwk.ParseKey[jwk.Key]([]byte(src))
+	rawKey, err := jwk.ParseKeyAs[jwk.Key]([]byte(src))
 	require.NoError(t, err, "jwk.ParseKey should succeed")
 	require.NotNil(t, rawKey, "key should not be nil")
 
