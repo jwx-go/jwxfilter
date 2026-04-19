@@ -1,0 +1,6 @@
+Changes
+=======
+
+v4.0.0 19 Apr 2026
+  * Initial release. Optional filter and introspection helpers extracted
+    from github.com/lestrrat-go/jwx/v4 core. Tracks jwx/v4 v4.0.0.
