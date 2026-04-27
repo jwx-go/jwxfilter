@@ -1,4 +1,26 @@
 // Package jwkfilter provides filters for [jwk.Key] fields.
+//
+// # kty cannot be removed
+//
+// jwk.Key.Remove("kty") is a no-op — kty is structurally required for
+// any valid JWK and the underlying key implementations refuse to drop
+// it. As a consequence, Reject results always retain kty even when
+// "kty" is in the configured name set; for example
+//
+//	jwkfilter.RSAStandard().Reject(rsaKey)
+//
+// returns a key containing only kty (every other RFC 7517 field has
+// been removed by Reject; kty cannot be). Filter is consistent with
+// the standard field set always including kty. Treat this as a
+// guaranteed invariant rather than a deviation: any jwk.Key produced
+// by these filters carries a usable kty.
+//
+// Callers whose goal is a kty-free representation (rather than a
+// valid JWK) can pipe the Reject result through
+// [github.com/jwx-go/jwxfilter/v4.AsMap] and delete the "kty" entry
+// from the resulting map. The Filter[jwk.Key] contract is fixed at
+// jwk.Key -> jwk.Key, so dropping kty from the output is only
+// possible by stepping outside the JWK type.
 package jwkfilter
 
 import (
