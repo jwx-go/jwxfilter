@@ -31,8 +31,10 @@ var standardHeaderNames = []string{
 	jwe.X509URLKey,
 }
 
-// ByName returns a filter that keeps (via Filter) or drops (via Reject) the
-// named fields from a [jwe.Headers].
+// ByName returns a filter over the given header names. Filter keeps
+// ONLY the named headers (drops everything else); Reject drops the
+// named headers (keeps everything else). See the [jwxfilter.Filter]
+// godoc for the keep-only/drop inversion footgun.
 func ByName(names ...string) jwxfilter.Filter[jwe.Headers] {
 	return filterable.NewNameBased[jwe.Headers](names...)
 }

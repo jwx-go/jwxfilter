@@ -45,8 +45,12 @@ var standardClaimNames = []string{
 	openid.ZoneinfoKey,
 }
 
-// ByName returns a filter that keeps (via Filter) or drops (via Reject) the
-// named claims. The filter accepts any [jwt.Token], including [openid.Token].
+// ByName returns a filter over the given claim names. Filter keeps
+// ONLY the named claims (drops everything else); Reject drops the
+// named claims (keeps everything else). To strip sensitive claims,
+// call Reject, not Filter; see the [jwxfilter.Filter] godoc for the
+// keep-only/drop inversion footgun. The filter accepts any
+// [jwt.Token], including [openid.Token].
 func ByName(names ...string) jwxfilter.Filter[jwt.Token] {
 	return filterable.NewNameBased[jwt.Token](names...)
 }

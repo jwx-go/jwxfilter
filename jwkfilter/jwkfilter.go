@@ -21,8 +21,11 @@ var commonKeyFields = []string{
 	jwk.X509CertThumbprintS256Key,
 }
 
-// ByName returns a filter that keeps (via Filter) or drops (via Reject) the
-// named fields from a [jwk.Key].
+// ByName returns a filter over the given JWK field names. Filter
+// keeps ONLY the named fields (drops everything else); Reject drops
+// the named fields (keeps everything else). To strip private-key
+// material — e.g. "d", "p", "q" — call Reject, not Filter; see the
+// [jwxfilter.Filter] godoc for the keep-only/drop inversion footgun.
 func ByName(names ...string) jwxfilter.Filter[jwk.Key] {
 	return filterable.NewNameBased[jwk.Key](names...)
 }
