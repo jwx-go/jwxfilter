@@ -14,6 +14,13 @@
 // the standard field set always including kty. Treat this as a
 // guaranteed invariant rather than a deviation: any jwk.Key produced
 // by these filters carries a usable kty.
+//
+// Callers whose goal is a kty-free representation (rather than a
+// valid JWK) can pipe the Reject result through
+// [github.com/jwx-go/jwxfilter/v4.AsMap] and delete the "kty" entry
+// from the resulting map. The Filter[jwk.Key] contract is fixed at
+// jwk.Key -> jwk.Key, so dropping kty from the output is only
+// possible by stepping outside the JWK type.
 package jwkfilter
 
 import (
