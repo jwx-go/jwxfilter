@@ -8,11 +8,14 @@
 // subpackages (jwtfilter, jwsfilter, jwefilter, jwkfilter, openidfilter).
 package jwxfilter
 
-// Filter is a filter over any JWx object type.
+// Filter is a filter over any JWx object type. The two methods are
+// complementary set operations on the configured field-name set N
+// against the input object's fields:
 //
-// Filter returns a new object containing only the fields that match the
-// filter's criteria. Reject returns a new object containing only the fields
-// that do NOT match.
+//   - Filter(obj) returns a new object containing ONLY the fields whose
+//     names are in N. Every other field is REMOVED.
+//   - Reject(obj) returns a new object with the fields whose names are
+//     in N REMOVED. Every other field is KEPT.
 //
 // Users obtain a Filter by calling one of the constructors in the
 // per-JOSE-type subpackages:
