@@ -6,6 +6,20 @@
 // one Mappable interface, and the AsMap helper. All framework machinery lives
 // inside an internal package. Users construct filters via the per-JOSE-type
 // subpackages (jwtfilter, jwsfilter, jwefilter, jwkfilter, openidfilter).
+//
+// # Filters are post-validation
+//
+// Apply filters AFTER signature verification, claim validation, and key
+// import — never before. Filters drop fields, and running validation on a
+// filtered object can cause required-claim, audience, issuer, or other
+// downstream checks to silently pass against an input that no longer
+// contains those claims. The intended pattern is:
+//
+//	tok, err := jwt.Parse(raw, jwt.WithKey(...))      // verify + validate
+//	if err != nil { return err }
+//	stripped, err := jwtfilter.Standard().Filter(tok) // then filter
+//
+// not the other way around.
 package jwxfilter
 
 // Filter is a filter over any JWx object type. The two methods are

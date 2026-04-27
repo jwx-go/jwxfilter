@@ -12,8 +12,14 @@ type Mappable interface {
 
 // AsMap populates dst with every key/value pair in m. The values written
 // into dst are the exact values returned by m.Field(); mutable values such
-// as slices, maps, and pointers may alias the original object's backing
-// storage. AsMap is not a deep-copy or snapshot helper.
+// as slices, maps, and pointers alias the original object's backing storage.
+// Mutating those values through dst — appending to a slice, writing into a
+// map, dereferencing and assigning through a pointer — mutates the source
+// jwx object. AsMap is not a deep-copy or snapshot helper.
+//
+// Callers needing an independent snapshot must deep-copy the values out of
+// dst after AsMap returns (for example with maps.Clone, slices.Clone, or
+// per-type copy logic for structs).
 //
 // Returns an error if dst is nil.
 func AsMap(m Mappable, dst map[string]any) error {

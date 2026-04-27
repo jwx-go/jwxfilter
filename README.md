@@ -19,6 +19,23 @@ go get github.com/jwx-go/jwxfilter/v4
 | `jwxfilter/jwkfilter` | Filters for `jwk.Key` |
 | `jwxfilter/openidfilter` | Filters for `openid.Token` (OpenID Connect Core 1.0 claims) |
 
+## When to use
+
+Apply filters **after** signature verification, claim validation, and key import — never before. Filters drop fields. If you filter first and then validate, downstream checks (required-claim, audience, issuer, custom validators) can silently pass against an input that no longer contains the claims they were configured to check.
+
+```go
+// Right: verify+validate, then filter
+tok, err := jwt.Parse(raw, jwt.WithKey(...))
+if err != nil { return err }
+stripped, _ := jwtfilter.Standard().Filter(tok)
+
+// Wrong: filter first, then validate against the stripped object
+tok, _   := jwt.ParseInsecure(raw)
+stripped, _ := jwtfilter.Standard().Filter(tok)
+if err := jwt.Validate(stripped, jwt.WithRequiredClaim("app_role")); err != nil { ... }
+// app_role was filtered out; the validator passes silently.
+```
+
 ## Example
 
 ```go
