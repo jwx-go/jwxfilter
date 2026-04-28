@@ -1,6 +1,11 @@
 Changes
 =======
 
+v4.0.1 28 Apr 2026
+  * Documentation only. Tighten the package-level contract around
+    `AsMap` aliasing and the `jwk` kty invariant; spell out the
+    `Filter` / `Reject` keep-only/drop inversion. No code changes.
+
 v4.0.0 19 Apr 2026
   * Initial release. Optional filter and introspection helpers extracted
     from github.com/lestrrat-go/jwx/v4 core. Tracks jwx/v4 v4.0.0.
