@@ -1,4 +1,41 @@
 // Package jwefilter provides filters for [jwe.Headers] fields.
+//
+// # Single-headers contract
+//
+// The filters returned by [ByName] and [Standard] operate on one
+// [jwe.Headers] value at a time. They do NOT traverse a [jwe.Message].
+//
+// A general-form JWE-JSON message carries multiple header layers: a
+// protected header (integrity-protected via the AEAD AAD), an
+// unprotected header (sibling JSON object, mutable in transit), and a
+// per-recipient header on each [jwe.Recipient]. Applying a filter to
+// one layer leaves the others untouched. Concretely:
+//
+//	// Wrong: only strips jku from the protected header.
+//	clean, _ := jwefilter.ByName(jwe.JWKSetURLKey).Reject(
+//	    msg.ProtectedHeaders())
+//	_ = msg.SetProtectedHeaders(clean)
+//	// msg.UnprotectedHeaders() — and every msg.Recipients()[i].Headers() —
+//	// still carry the original jku.
+//
+// To scrub a header parameter from every place it could appear in a
+// [jwe.Message], the caller applies the filter to ProtectedHeaders,
+// UnprotectedHeaders, and the Headers of every Recipient. Nothing in
+// this package does that automatically; the design assumption is that
+// callers know which layer they care about.
+//
+// # Security note
+//
+// Stripping a header parameter from one layer does not stop a
+// decrypter or downstream consumer that reads the OTHER layer from
+// observing it. jwx's [jwe.Decrypt] consults the protected layer for
+// default key selection, but custom key-provider extensions or
+// downstream policy code may inspect the unprotected and per-
+// recipient layers too. If you rely on this package as part of an
+// SSRF mitigation (e.g. removing jku before decryption), apply the
+// filter to every layer the downstream decrypter might read — or use
+// raw [jwe.Message] mutation, which the caller already needs to do
+// for non-protected layers.
 package jwefilter
 
 import (
