@@ -1,6 +1,13 @@
 Changes
 =======
 
+v4.0.2 7 May 2026
+  * Add `openidfilter.ByNameTyped` / `openidfilter.StandardTyped`
+    constructors that return `Filter[openid.Token]` directly. The
+    existing `ByName` / `Standard` constructors (returning
+    `Filter[jwt.Token]`) remain for callers filtering heterogeneous
+    `jwt.Token` streams.
+
 v4.0.1 28 Apr 2026
   * Documentation only. Tighten the package-level contract around
     `AsMap` aliasing and the `jwk` kty invariant; spell out the
