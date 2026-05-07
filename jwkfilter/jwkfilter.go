@@ -49,9 +49,19 @@ func ByName(names ...string) jwxfilter.Filter[jwk.Key] {
 	return filterable.NewNameBased[jwk.Key](names...)
 }
 
-// RSAStandard returns a filter for RFC 7517 + RFC 7518 RSA key fields
-// (kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256, e, n, d, dp, dq,
-// p, q, qi).
+// RSAStandard returns a filter for the RFC 7517 + RFC 7518 RSA key
+// fields. Use it to drop custom/extension fields from a [jwk.Key]
+// while preserving the canonical RSA JWK shape.
+//
+// This is NOT a sanitization primitive. The returned filter retains
+// the RSA private-component fields (d, dp, dq, p, q, qi) when they
+// are present on the input — by design, because the RFC-canonical
+// RSA field set includes them. To produce a JWK safe for publication
+// (e.g. a JWKS endpoint), use [jwk.PublicKeyOf] from core jwx
+// instead.
+//
+// Fields kept: kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256,
+// e, n, d, dp, dq, p, q, qi.
 func RSAStandard() jwxfilter.Filter[jwk.Key] {
 	names := append([]string{}, commonKeyFields...)
 	names = append(names,
@@ -62,8 +72,18 @@ func RSAStandard() jwxfilter.Filter[jwk.Key] {
 	return ByName(names...)
 }
 
-// ECDSAStandard returns a filter for RFC 7517 + RFC 7518 ECDSA key fields
-// (kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256, crv, x, y, d).
+// ECDSAStandard returns a filter for the RFC 7517 + RFC 7518 ECDSA
+// key fields. Use it to drop custom/extension fields from a
+// [jwk.Key] while preserving the canonical ECDSA JWK shape.
+//
+// This is NOT a sanitization primitive. The returned filter retains
+// the ECDSA private-component field (d) when it is present on the
+// input — by design, because the RFC-canonical ECDSA field set
+// includes it. To produce a JWK safe for publication (e.g. a JWKS
+// endpoint), use [jwk.PublicKeyOf] from core jwx instead.
+//
+// Fields kept: kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256,
+// crv, x, y, d.
 func ECDSAStandard() jwxfilter.Filter[jwk.Key] {
 	names := append([]string{}, commonKeyFields...)
 	names = append(names,
@@ -72,24 +92,52 @@ func ECDSAStandard() jwxfilter.Filter[jwk.Key] {
 	return ByName(names...)
 }
 
-// OKPStandard returns a filter for RFC 8037 OKP key fields
-// (kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256, crv, x, d).
+// OKPStandard returns a filter for the RFC 8037 OKP key fields. Use
+// it to drop custom/extension fields from a [jwk.Key] while
+// preserving the canonical OKP JWK shape.
+//
+// This is NOT a sanitization primitive. The returned filter retains
+// the OKP private-component field (d) when it is present on the
+// input — by design, because the RFC-canonical OKP field set
+// includes it. To produce a JWK safe for publication (e.g. a JWKS
+// endpoint), use [jwk.PublicKeyOf] from core jwx instead.
+//
+// Fields kept: kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256,
+// crv, x, d.
 func OKPStandard() jwxfilter.Filter[jwk.Key] {
 	names := append([]string{}, commonKeyFields...)
 	names = append(names, jwk.OKPCrvKey, jwk.OKPXKey, jwk.OKPDKey)
 	return ByName(names...)
 }
 
-// SymmetricStandard returns a filter for RFC 7517 symmetric key fields
-// (kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256, k).
+// SymmetricStandard returns a filter for the RFC 7517 symmetric key
+// fields. Use it to drop custom/extension fields from a symmetric
+// [jwk.Key] while preserving the canonical JWK shape.
+//
+// This is NOT a sanitization primitive. Symmetric keys consist
+// entirely of secret material (the "k" field); there is no
+// public-only representation. Do not publish the result of this
+// filter, or any symmetric jwk.Key.
+//
+// Fields kept: kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256, k.
 func SymmetricStandard() jwxfilter.Filter[jwk.Key] {
 	names := append([]string{}, commonKeyFields...)
 	names = append(names, jwk.SymmetricOctetsKey)
 	return ByName(names...)
 }
 
-// AKPStandard returns a filter for AKP key fields
-// (kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256, pub, priv).
+// AKPStandard returns a filter for the AKP key fields. Use it to
+// drop custom/extension fields from a [jwk.Key] while preserving the
+// canonical AKP JWK shape.
+//
+// This is NOT a sanitization primitive. The returned filter retains
+// the AKP private-component field (priv) when it is present on the
+// input — by design, because the canonical AKP field set includes
+// it. To produce a JWK safe for publication (e.g. a JWKS endpoint),
+// use [jwk.PublicKeyOf] from core jwx instead.
+//
+// Fields kept: kty, use, key_ops, alg, kid, x5u, x5c, x5t, x5t#S256,
+// pub, priv.
 func AKPStandard() jwxfilter.Filter[jwk.Key] {
 	names := append([]string{}, commonKeyFields...)
 	names = append(names, jwk.AKPPubKey, jwk.AKPPrivKey)

@@ -1,6 +1,13 @@
 package jwkfilter_test
 
 import (
+	"bytes"
+	"crypto/ecdsa"
+	"crypto/ed25519"
+	"crypto/elliptic"
+	"crypto/rand"
+	"crypto/rsa"
+	"fmt"
 	"testing"
 
 	"github.com/jwx-go/jwxfilter/v4/jwkfilter"
@@ -230,4 +237,94 @@ func TestECDSAStandard(t *testing.T) {
 		require.True(t, ok, "rejected.Field should succeed")
 		require.Equal(t, "value1", customValue, "value for custom1 field should be preserved")
 	})
+}
+
+// TestStandardFiltersRetainPrivateFields pins the documented contract
+// that *Standard() constructors are NOT sanitization primitives —
+// when applied to a private key, private-component fields are
+// retained. A regression here would either be a behavior change
+// (*Standard moved to public-only) or would silently turn a doc
+// promise into a lie. Either way, the test fails.
+func TestStandardFiltersRetainPrivateFields(t *testing.T) {
+	t.Run("RSA", func(t *testing.T) {
+		rsaPriv, err := rsa.GenerateKey(rand.Reader, 2048)
+		require.NoError(t, err, "rsa.GenerateKey should succeed")
+		key, err := jwk.Import[jwk.Key](rsaPriv)
+		require.NoError(t, err, "jwk.Import should succeed")
+
+		filtered, err := jwkfilter.RSAStandard().Filter(key)
+		require.NoError(t, err, "RSAStandard().Filter should succeed")
+
+		for _, name := range []string{
+			jwk.RSADKey, jwk.RSAPKey, jwk.RSAQKey,
+			jwk.RSADPKey, jwk.RSADQKey, jwk.RSAQIKey,
+		} {
+			require.True(t, filtered.Has(name),
+				"RSAStandard intentionally retains private RSA component %q; see godoc", name)
+		}
+	})
+
+	t.Run("ECDSA", func(t *testing.T) {
+		ecPriv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+		require.NoError(t, err, "ecdsa.GenerateKey should succeed")
+		key, err := jwk.Import[jwk.Key](ecPriv)
+		require.NoError(t, err, "jwk.Import should succeed")
+
+		filtered, err := jwkfilter.ECDSAStandard().Filter(key)
+		require.NoError(t, err, "ECDSAStandard().Filter should succeed")
+
+		require.True(t, filtered.Has(jwk.ECDSADKey),
+			"ECDSAStandard intentionally retains private EC scalar (d); see godoc")
+	})
+
+	t.Run("OKP", func(t *testing.T) {
+		_, edPriv, err := ed25519.GenerateKey(rand.Reader)
+		require.NoError(t, err, "ed25519.GenerateKey should succeed")
+		key, err := jwk.Import[jwk.Key](edPriv)
+		require.NoError(t, err, "jwk.Import should succeed")
+
+		filtered, err := jwkfilter.OKPStandard().Filter(key)
+		require.NoError(t, err, "OKPStandard().Filter should succeed")
+
+		require.True(t, filtered.Has(jwk.OKPDKey),
+			"OKPStandard intentionally retains private OKP scalar (d); see godoc")
+	})
+
+	t.Run("Symmetric", func(t *testing.T) {
+		secret := bytes.Repeat([]byte{0x42}, 32)
+		key, err := jwk.Import[jwk.Key](secret)
+		require.NoError(t, err, "jwk.Import should succeed")
+
+		filtered, err := jwkfilter.SymmetricStandard().Filter(key)
+		require.NoError(t, err, "SymmetricStandard().Filter should succeed")
+
+		require.True(t, filtered.Has(jwk.SymmetricOctetsKey),
+			"SymmetricStandard preserves k (the secret material); symmetric keys have no public form")
+	})
+
+	// AKP is not exercised here: its private-field code path is
+	// identical to the four covered above, and constructing an AKP
+	// JWK requires registering an AKP variant via an extension
+	// module (jwx-go/mldsa, jwx-go/reddy-pqchpke). The godoc on
+	// AKPStandard is the contract; this test is the regression
+	// pin for the shape.
+}
+
+// ExampleRSAStandard_notForPublication shows that RSAStandard is not
+// a sanitization primitive — private RSA components survive the
+// filter. To produce a JWK safe for publication, use jwk.PublicKeyOf
+// from core jwx instead.
+func ExampleRSAStandard_notForPublication() {
+	rsaPriv, _ := rsa.GenerateKey(rand.Reader, 2048)
+	privateKey, _ := jwk.Import[jwk.Key](rsaPriv)
+
+	afterFilter, _ := jwkfilter.RSAStandard().Filter(privateKey)
+	fmt.Println("after RSAStandard, has private d:", afterFilter.Has(jwk.RSADKey))
+
+	safe, _ := jwk.PublicKeyOf(privateKey)
+	fmt.Println("after jwk.PublicKeyOf, has private d:", safe.Has(jwk.RSADKey))
+
+	// Output:
+	// after RSAStandard, has private d: true
+	// after jwk.PublicKeyOf, has private d: false
 }
